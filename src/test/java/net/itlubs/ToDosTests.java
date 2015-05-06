@@ -17,28 +17,31 @@ public class ToDosTests {
 
     @Test
     public void testCreateTask() {
-		String textToVerify2 = "_+)({}|\"¥¨›„¨ŽººÒ><>?:|}{";
+        String textToVerify1 = "abcdABCD1234!@#$";
+        String textToVerify2 = "_+)({}|\"¥¨›„¨ŽººÒ><>?:|}{";
+        String textToVerify3 = "text text text text TEXT TEXT TEXT";
+        String textToVerify4 = "\'kashdkjahdkjqhekjahkjahdkjhzkjchkjahsdkjwhekja\'";
 		
-		ElementsCollection todoBlock = $$("#todo-list>li");
+        ElementsCollection todoBlock = $$("#todo-list>li");
 		
-		private void addTask(String str) {
-			todoBlock.setValue(str).pressEnter();
+        private void addTask(String str) {
+            todoBlock.setValue(str).pressEnter();
 		}
 		
-		private void clearCompletedTasks() {
-			$("#clear-completed").click();
+        private void clearCompletedTasks() {
+            $("#clear-completed").click();
 		}
 		
         //Step 1: Open todomvc.com in the web broweser
         open("http://todomvc.com/examples/troopjs_require/#/");
-		//[VERIFICATION]: list is empty
+        //[VERIFICATION]: list is empty
         todoBlock.shouldBe(empty);
 
         //Step 2: Add all items to the list
-		addTask(textToVerify1);
-		addTask(textToVerify2);
-		addTask(textToVerify3);
-		addTask(textToVerify4);
+        addTask(textToVerify1);
+        addTask(textToVerify2);
+        addTask(textToVerify3);
+        addTask(textToVerify4);
 
         //Step 3: Remove 2nd task from the list
         todoBlock.get(1).hover().find(".destroy").click();
