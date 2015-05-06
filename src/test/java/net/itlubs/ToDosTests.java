@@ -15,7 +15,15 @@ import static com.codeborne.selenide.Selenide.open;
  */
 public class ToDosTests {
 
-    @Test
+	private void addTask(String str) {
+        todoBlock.setValue(str).pressEnter();
+	}
+	
+	private void clearCompletedTasks() {
+        $("#clear-completed").click();
+	}
+	
+	@Test
     public void testCreateTask() {
         String textToVerify1 = "abcdABCD1234!@#$";
         String textToVerify2 = "_+)({}|\"¥¨›„¨ŽººÒ><>?:|}{";
@@ -23,14 +31,6 @@ public class ToDosTests {
         String textToVerify4 = "\'kashdkjahdkjqhekjahkjahdkjhzkjchkjahsdkjwhekja\'";
 		
         ElementsCollection todoBlock = $$("#todo-list>li");
-		
-        private void addTask(String str) {
-            todoBlock.setValue(str).pressEnter();
-        }
-		
-        private void clearCompletedTasks() {
-            $("#clear-completed").click();
-        }
 		
         //Step 1: Open todomvc.com in the web broweser
         open("http://todomvc.com/examples/troopjs_require/#/");
