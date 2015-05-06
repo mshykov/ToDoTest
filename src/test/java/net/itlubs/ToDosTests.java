@@ -53,5 +53,5 @@ public class ToDosTests {
         //Step 5: Mark all task as completed and clear all completed tasks
         $("#toggle-all").click();
         clearCompletedTasks();
-	}
+    }
 }
