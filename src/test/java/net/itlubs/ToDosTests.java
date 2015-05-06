@@ -26,11 +26,11 @@ public class ToDosTests {
 		
         private void addTask(String str) {
             todoBlock.setValue(str).pressEnter();
-		}
+        }
 		
         private void clearCompletedTasks() {
             $("#clear-completed").click();
-		}
+        }
 		
         //Step 1: Open todomvc.com in the web broweser
         open("http://todomvc.com/examples/troopjs_require/#/");
@@ -53,6 +53,5 @@ public class ToDosTests {
         //Step 5: Mark all task as completed and clear all completed tasks
         $("#toggle-all").click();
         clearCompletedTasks();
-
 	}
 }
