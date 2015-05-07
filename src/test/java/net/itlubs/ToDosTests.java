@@ -5,6 +5,7 @@ import com.codeborne.selenide.SelenideElement;
 import org.junit.Test;
 
 import static com.codeborne.selenide.CollectionCondition.empty;
+import static com.codeborne.selenide.CollectionCondition.exactTexts;
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.hidden;
 import static com.codeborne.selenide.Condition.present;
@@ -18,9 +19,9 @@ import static com.codeborne.selenide.Selenide.open;
  */
 public class ToDosTests {
 
-    ElementsCollection todoBlock = $$("#todo-list>li");
+    ElementsCollection liCollection = $$("#todo-list>li");
     SelenideElement footer = $("#footer");
-    SelenideElement countElements = $("#todo-count");
+    SelenideElement numberOfTasks = $("#todo-count");
 
     private void addTask(String str) {
         $("#new-todo").setValue(str).pressEnter();
@@ -35,15 +36,15 @@ public class ToDosTests {
     }
 
     public void assertTextAddedToList(int size, String str) {
-        int getElement = size - 1;
+        int taskIndex = size - 1;
 
-        todoBlock.shouldHaveSize(size);
-        todoBlock.get(getElement).shouldHave(text(str));
+        liCollection.shouldHaveSize(size);
+        liCollection.get(taskIndex).shouldHave(text(str));
     }
 
     public void assertFooterExists(String str) {
         footer.shouldBe(present);
-        countElements.shouldHave(text(str));
+        numberOfTasks.shouldHave(text(str));
     }
         
     @Test
@@ -53,41 +54,34 @@ public class ToDosTests {
         String t3 = "text text text text TEXT TEXT TEXT";
         String t4 = "\'kashdkjahdkjqhekjahkjahdkjhzkjchkjahsdkjwhekja\'";
 
-        //Step 1: Open todomvc.com in the web broweser
+        //Open todomvc.com in the web browser
         open("http://todomvc.com/examples/troopjs_require/#/");
-        //[VERIFICATION]: List is empty; footer is hidden
-        todoBlock.shouldBe(empty);
-        footer.shouldBe(hidden);
 
-        //Step 2: Add all items to the list
+        //Add all items to the list
         addTask(t1);
-        assertTextAddedToList(1, t1);
-        assertFooterExists("1");
         addTask(t2);
         addTask(t3);
         addTask(t4);
-        assertTextAddedToList(4, t4);
-        assertFooterExists("4");
+        liCollection.shouldHave(exactTexts(t1, t2, t3, t4));
+        //assertTextAddedToList(4, t4);
+        //assertFooterExists("4");
 
-        //Step 3: Remove 2nd task from the list
-        todoBlock.get(1).hover();
-        todoBlock.get(1).find(".destroy").click();
-        //[VERIFICATION]: 2nd task deleted; footer updated
-        todoBlock.shouldHaveSize(3);
+        //Remove 2nd task from the list
+        liCollection.get(1).hover();
+        liCollection.get(1).find(".destroy").click();
+        liCollection.shouldHaveSize(3);
         assertFooterExists("3");
         
-        //Step 4: Check the last one as completed and clear all completed tasks
-        todoBlock.get(2).find(".toggle").click();
+        //Check the last one as completed and clear all completed tasks
+        liCollection.get(2).find(".toggle").click();
         clearCompletedTasks();
-        //[VERIFICATION]: 4th task removed from the list; footer updated
-        todoBlock.shouldHaveSize(2);
+        liCollection.shouldHaveSize(2);
         assertFooterExists("2");
 
-        //Step 5: Mark all task as completed and clear all completed tasks
+        //Mark all task as completed and clear all completed tasks
         $("#toggle-all").click();
         clearCompletedTasks();
-        //[VERIFICATION]:List is empty; footer is hidden
-        todoBlock.shouldBe(empty);
+        liCollection.shouldBe(empty);
         footer.shouldBe(hidden);
     }
 }
