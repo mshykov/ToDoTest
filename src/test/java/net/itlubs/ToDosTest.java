@@ -6,13 +6,14 @@ import org.junit.Test;
 
 import static com.codeborne.selenide.CollectionCondition.empty;
 import static com.codeborne.selenide.CollectionCondition.texts;
+import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 import static com.codeborne.selenide.Selenide.open;
 
 /**
  * Created by Shykov Maksym on 29.04.15.
- * Version 1.0
+ * Version 2.0
  */
 public class ToDosTest {
 
@@ -31,20 +32,27 @@ public class ToDosTest {
         String t4 = "\'kashdkjahdkjqhekjahkjahdkjhzkjchkjahsdkjwhekja\'";
 
         open("http://todomvc.com/examples/troopjs_require/#/");
+
+        //create tasks
         addTask(t1);
         addTask(t2);
         addTask(t3);
         addTask(t4);
         tasks.shouldHave(texts(t1, t2, t3, t4));
 
-        tasks.get(1).hover();
-        tasks.get(1).find(".destroy").click();
+        //edit tasks
+
+        //delete task
+        tasks.find(text(t2)).hover();
+        tasks.find(text(t2)).find(".destroy").click();
         tasks.shouldHave(texts(t1, t3, t4));
 
-        tasks.get(2).find(".toggle").click();
+        //complete & clear
+        tasks.find(text(t4)).find(".toggle").click();
         clearCompleted.click();
         tasks.shouldHave(texts(t1, t3));
 
+        //complete all & clear
         $("#toggle-all").click();
         clearCompleted.click();
         tasks.shouldBe(empty);
