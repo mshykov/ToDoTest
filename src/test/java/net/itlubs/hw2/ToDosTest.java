@@ -1,4 +1,4 @@
-package net.itlubs;
+package net.itlubs.hw2;
 
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
