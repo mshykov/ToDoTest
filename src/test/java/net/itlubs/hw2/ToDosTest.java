@@ -1,15 +1,15 @@
 package net.itlubs.hw2;
 
-import com.codeborne.selenide.ElementsCollection;
-import com.codeborne.selenide.SelenideElement;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static com.codeborne.selenide.CollectionCondition.empty;
+import static com.codeborne.selenide.CollectionCondition.exactTexts;
 import static com.codeborne.selenide.CollectionCondition.texts;
 import static com.codeborne.selenide.Condition.text;
-import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.$$;
-import static com.codeborne.selenide.Selenide.open;
+import static com.codeborne.selenide.Selenide.*;
+import static net.itlubs.helper.ToDosActions.*;
 
 /**
  * Created by Shykov Maksym on 29.04.15.
@@ -17,44 +17,60 @@ import static com.codeborne.selenide.Selenide.open;
  */
 public class ToDosTest {
 
-    ElementsCollection tasks = $$("#todo-list>li");
-    SelenideElement clearCompleted = $("#clear-completed");
-
-    private void addTask(String text) {
-        $("#new-todo").setValue(text).pressEnter();
-    }
-        
-    @Test
-    public void testCreateTask() {
-        String t1 = "abcdABCD1234!@#$";
-        String t2 = "_+)({}|\"¥¨›„¨ŽººÒ><>?:|}{";
-        String t3 = "text text text text TEXT TEXT TEXT";
-        String t4 = "\'kashdkjahdkjqhekjahkjahdkjhzkjchkjahsdkjwhekja\'";
-
+    @BeforeClass
+    public static void openToDoesMvc() {
         open("http://todomvc.com/examples/troopjs_require/#/");
+    }
 
-        //create tasks
-        addTask(t1);
-        addTask(t2);
-        addTask(t3);
-        addTask(t4);
-        tasks.shouldHave(texts(t1, t2, t3, t4));
+   // @Before
+    public void clearData() {
+        executeJavaScript("localStorage.clear()");
+        open("http://todomvc.com/");
+        open("http://todomvc.com/examples/troopjs_require/#/");
+    }
 
-        //edit tasks
-
-        //delete task
-        tasks.find(text(t2)).hover();
-        tasks.find(text(t2)).find(".destroy").click();
-        tasks.shouldHave(texts(t1, t3, t4));
-
-        //complete & clear
-        tasks.find(text(t4)).find(".toggle").click();
+    @Test
+    public void testAtAllFilter() {
+        open("http://todomvc.com/examples/troopjs_require/#/");
+        // create task
+        addTask("a");
+        addTask("b");
+        addTask("c");
+        addTask("d");
+        tasks.shouldHave(exactTexts("a", "b", "c", "d"));
+        // edit
+        editTask("c", "c updated");
+        // delete
+        tasks.find(text("b")).hover().find(".destroy").click();
+        tasks.shouldHave(texts("a", "c", "d"));
+        // complete
+        toggleTask("d");
+        tasks.shouldHave(texts("a", "c", "d")); //?? think about
+        // filter
+        // clear completed
         clearCompleted.click();
-        tasks.shouldHave(texts(t1, t3));
-
-        //complete all & clear
+        // reopen task
+        // complete all task
         $("#toggle-all").click();
+        // clear completed task
         clearCompleted.click();
         tasks.shouldBe(empty);
+    }
+
+    @Test
+    public void testAtActiveFilter() {
+        // create task
+        // edit task
+        // delete
+        // complete
+        // ? clear completed
+    }
+
+    @Test
+    public void testAtCompletedFilter() {
+        //delete task
+        //? edit task
+        // reopen
+        // clear
     }
 }
