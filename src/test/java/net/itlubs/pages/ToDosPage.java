@@ -5,7 +5,10 @@ import com.codeborne.selenide.SelenideElement;
 import org.openqa.selenium.WebElement;
 import ru.yandex.qatools.allure.annotations.Step;
 
+import static com.codeborne.selenide.CollectionCondition.exactTexts;
 import static com.codeborne.selenide.Condition.exactText;
+import static com.codeborne.selenide.Condition.hidden;
+import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 import static com.codeborne.selenide.Selenide.actions;
@@ -62,5 +65,15 @@ public class ToDosPage {
     @Step
     public void clearCompletedTasks() {
         clearCompletedButton.click();
+    }
+
+    @Step
+    public SelenideElement visibleItemOnPage(String task) {
+        return tasks.findBy(exactText(task)).shouldBe(visible);
+    }
+
+    @Step
+    public SelenideElement hiddenItemOnPage(String task) {
+        return tasks.findBy(exactText(task)).shouldBe(hidden);
     }
 }

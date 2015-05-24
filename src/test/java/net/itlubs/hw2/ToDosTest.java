@@ -13,6 +13,7 @@ import static com.codeborne.selenide.CollectionCondition.exactTexts;
 import static com.codeborne.selenide.CollectionCondition.texts;
 import static com.codeborne.selenide.Condition.exactText;
 import static com.codeborne.selenide.Condition.text;
+import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.*;
 import static net.itlubs.pages.ToDosPage.*;
 
@@ -38,6 +39,7 @@ public class ToDosTest {
     public void testAtAllFilter() {
         AllPage allPage = new AllPage();
         allPage.loadUrl();
+
         // create task
         allPage.addTask("a");
         allPage.addTask("b");
@@ -45,22 +47,28 @@ public class ToDosTest {
         allPage.addTask("d");
         allPage.addTask("e");
         allPage.tasks.shouldHave(exactTexts("a", "b", "c", "d", "e"));
+
         // edit
         allPage.editTask("c", "c updated");
         allPage.tasks.shouldHave(exactTexts("a", "b", "c updated", "d", "e"));
+
         // delete
         allPage.deleteTask("b");
-        allPage.tasks.shouldHave(texts("a", "c updated", "d", "e"));
+        allPage.tasks.shouldHave(exactTexts("a", "c updated", "d", "e"));
+
         // complete
         allPage.toggleTask("d");
         allPage.toggleTask("e");
-        allPage.tasks.shouldHave(texts("a", "c updated", "d", "e"));
+        allPage.tasks.shouldHave(exactTexts("a", "c updated", "d", "e"));
         allPage.itemsLeftCounter.shouldHave(exactText("2"));
 
         // filter
         ActivePage activePage = new ActivePage();
         activePage.loadUrl();
-        activePage.tasks.shouldHave(exactTexts("a", "c updated"));
+        activePage.visibleItemOnPage("a");
+        activePage.visibleItemOnPage("c updated");
+        activePage.hiddenItemOnPage("d");
+        activePage.hiddenItemOnPage("e");
         CompletedPage completedPage = new CompletedPage();
         completedPage.loadUrl();
         completedPage.tasks.shouldHave(exactTexts("d", "e"));
@@ -70,16 +78,16 @@ public class ToDosTest {
 
         // reopen task
         allPage.toggleTask("e");
-        allPage.tasks.shouldHave(texts("a", "c updated", "d", "e"));
+        allPage.tasks.shouldHave(exactTexts("a", "c updated", "d", "e"));
         allPage.itemsLeftCounter.shouldHave(exactText("3"));
 
         // clear completed
         allPage.clearCompletedTasks();
-        allPage.tasks.shouldHave(texts("a", "c updated", "e"));
+        allPage.tasks.shouldHave(exactTexts("a", "c updated", "e"));
 
         // complete all task
         allPage.toggleAllTasks();
-        allPage.tasks.shouldHave(texts("a", "c updated", "e"));
+        allPage.tasks.shouldHave(exactTexts("a", "c updated", "e"));
         allPage.itemsLeftCounter.shouldHave(exactText("0"));
 
         // clear completed task
@@ -91,30 +99,33 @@ public class ToDosTest {
     public void testAtActiveFilter() {
         ActivePage activePage = new ActivePage();
         activePage.loadUrl();
+
         // create task
         activePage.addTask("a");
         activePage.addTask("b");
         activePage.addTask("c");
-        activePage.tasks.shouldHave(texts("a", "b", "c"));
+        activePage.tasks.shouldHave(exactTexts("a", "b", "c"));
+
         // edit task
         activePage.editTask("b", "b updated");
-        activePage.tasks.shouldHave(texts("a", "b updated", "c"));
+        activePage.tasks.shouldHave(exactTexts("a", "b updated", "c"));
+
         // delete
         activePage.deleteTask("c");
-        activePage.tasks.shouldHave(texts("a", "b updated"));
+        activePage.tasks.shouldHave(exactTexts("a", "b updated"));
+
         // complete
         activePage.toggleTask("a");
-        activePage.tasks.shouldHave(texts("b updated"));
+        activePage.tasks.shouldHave(exactTexts("b updated"));
         activePage.itemsLeftCounter.shouldHave(exactText("1"));
         AllPage allPage = new AllPage();
         allPage.loadUrl();
-        allPage.tasks.shouldHave(texts("a", "b updated"));
-        // ? clear completed
+        allPage.tasks.shouldHave(exactTexts("a", "b updated"));
     }
 
     @Test
     public void testAtCompletedFilter() {
-        // prepear test data
+        // pre-pear test data
         AllPage allPage = new AllPage();
         allPage.loadUrl();
         allPage.addTask("a");
@@ -124,34 +135,36 @@ public class ToDosTest {
         allPage.toggleAllTasks();
         CompletedPage completedPage = new CompletedPage();
         completedPage.loadUrl();
+
         //delete task
         completedPage.deleteTask("a");
-        completedPage.tasks.shouldHave(texts("b", "c", "d"));
+        completedPage.tasks.shouldHave(exactTexts("b", "c", "d"));
         ActivePage activePage = new ActivePage();
         activePage.loadUrl();
-        activePage.itemsLeftCounter.shouldHave(text("0"));
+        activePage.itemsLeftCounter.shouldHave(exactText("0"));
         activePage.tasks.shouldBe(empty);
         completedPage.loadUrl();
-        //? edit task
+
         // reopen
         completedPage.toggleTask("b");
-        completedPage.tasks.shouldHave(texts("c", "d"));
+        completedPage.tasks.shouldHave(exactTexts("c", "d"));
         allPage.loadUrl();
-        allPage.itemsLeftCounter.shouldHave(text("1"));
-        allPage.tasks.shouldHave(texts("b", "c", "d"));
+        allPage.itemsLeftCounter.shouldHave(exactText("1"));
+        allPage.tasks.shouldHave(exactTexts("b", "c", "d"));
         activePage.loadUrl();
-        activePage.itemsLeftCounter.shouldHave(text("1"));
-        activePage.tasks.shouldHave(texts("b"));
+        activePage.itemsLeftCounter.shouldHave(exactText("1"));
+        activePage.tasks.shouldHave(exactTexts("b"));
         completedPage.loadUrl();
+
         // clear
         completedPage.clearCompletedTasks();
-        completedPage.itemsLeftCounter.shouldHave("1");
+        completedPage.itemsLeftCounter.shouldHave(exactText("1"));
         completedPage.tasks.shouldBe(empty);
         activePage.loadUrl();
-        activePage.itemsLeftCounter.shouldHave("1");
-        activePage.tasks.shouldHave(texts("b"));
+        activePage.itemsLeftCounter.shouldHave(exactText("1"));
+        activePage.tasks.shouldHave(exactTexts("b"));
         allPage.loadUrl();
-        allPage.itemsLeftCounter.shouldHave(text("1"));
-        allPage.tasks.shouldHave(texts("b"));
+        allPage.itemsLeftCounter.shouldHave(exactText("1"));
+        allPage.tasks.shouldHave(exactTexts("b"));
     }
 }
