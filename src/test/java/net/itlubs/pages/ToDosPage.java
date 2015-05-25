@@ -19,7 +19,7 @@ import static com.codeborne.selenide.Selenide.actions;
  */
 public class ToDosPage {
 
-    public static String todosMainUrl = "http://todomvc.com/";
+    public String todosMainUrl = "http://todomvc.com/examples/troopjs_require";
     public SelenideElement newTask = $("#new-todo");
     public SelenideElement itemsLeftCounter = $("#todo-count>strong");
     public SelenideElement clearCompletedButton = $("#clear-completed");
@@ -27,10 +27,12 @@ public class ToDosPage {
     public ElementsCollection tasks = $$("#todo-list>li");
     public ElementsCollection footerFilters = $$("#filters>li");
 
-    //tasks.filter(visible).shouldHave("a", "b"); // visible text on the screen
-
     public void addTask(String text) {
         newTask.setValue(text).pressEnter();
+    }
+
+    public void loadUrl() {
+        open(todosMainUrl);
     }
 
     @Step
@@ -58,22 +60,28 @@ public class ToDosPage {
         toggleAllCheckbox.click();
     }
 
-    public int getCounterValue() {
-        return Integer.valueOf(itemsLeftCounter.toString());
-    }
-
     @Step
     public void clearCompletedTasks() {
         clearCompletedButton.click();
     }
 
     @Step
-    public SelenideElement visibleItemOnPage(String task) {
-        return tasks.findBy(exactText(task)).shouldBe(visible);
+    public void assertItemsLeftCounter(int leftItemsCounter) {
+        itemsLeftCounter.shouldHave(exactText(integer.toString(leftItemsCounter));
     }
 
     @Step
-    public SelenideElement hiddenItemOnPage(String task) {
-        return tasks.findBy(exactText(task)).shouldBe(hidden);
+    public void visibleItemOnPage(String... tasksToCheck) {
+        for (String i : tasksToChech) {
+            tasks.findBy(exactText(i)).shouldBe(visible);
+        }
     }
+
+    @Step
+    public void hiddenItemOnPage(String... tasksToCheck) {
+        for (String i : tasksToChech) {
+            tasks.findBy(exactText(i)).shouldBe(hidden);
+        }
+    }
+
 }

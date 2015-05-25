@@ -14,7 +14,7 @@ public class CompletedPage extends ToDosPage {
     public ElementsCollection tasks = $$("#todo-list>.completed");
 
     public void loadUrl() {
-        open(todosMainUrl + "examples/troopjs_require/#/completed");
+        open(todosMainUrl + "/#/completed");
     }
 
 }

@@ -5,6 +5,7 @@ import net.itlubs.pages.ActivePage;
 import net.itlubs.pages.AllPage;
 import net.itlubs.pages.CompletedPage;
 import org.junit.Before;
+import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -24,16 +25,21 @@ import static net.itlubs.pages.ToDosPage.*;
  */
 public class ToDosTest {
 
-    @BeforeClass
-    public static void openToDoesMvc() {
-        open(todosMainUrl);
-    }
+    ToDosPage todoesPage = new ToDosPage();
+
+    //@BeforeClass
 
     @Before
     public void clearData() {
+        todoesPage.loadUrl;
         executeJavaScript("localStorage.clear()");
-        open(todosMainUrl);
     }
+
+    @After
+    public void closeBroweser() {
+        close();
+    }
+
 
     @Test
     public void testAtAllFilter() {
@@ -60,26 +66,27 @@ public class ToDosTest {
         allPage.toggleTask("d");
         allPage.toggleTask("e");
         allPage.tasks.shouldHave(exactTexts("a", "c updated", "d", "e"));
-        allPage.itemsLeftCounter.shouldHave(exactText("2"));
+        allPage.assertItemsLeftCounter(2);
 
         // filter
         ActivePage activePage = new ActivePage();
         activePage.loadUrl();
-        activePage.visibleItemOnPage("a");
-        activePage.visibleItemOnPage("c updated");
-        activePage.hiddenItemOnPage("d");
-        activePage.hiddenItemOnPage("e");
+        activePage.visibleItemOnPage("a", "b updated");
+        activePage.hiddenItemOnPage("d", "e");
+        activePage.assertItemsLeftCounter(2);
         CompletedPage completedPage = new CompletedPage();
         completedPage.loadUrl();
-        completedPage.tasks.shouldHave(exactTexts("d", "e"));
+        activePage.visibleItemOnPage("d", "e");
+        activePage.hiddenItemOnPage("a", "c updated");
+        activePage.assertItemsLeftCounter(2);
         allPage.loadUrl();
         allPage.tasks.shouldHave(exactTexts("a", "c updated", "d", "e"));
-        allPage.itemsLeftCounter.shouldHave(exactText("2"));
+        allPage.assertItemsLeftCounter(2);
 
         // reopen task
         allPage.toggleTask("e");
         allPage.tasks.shouldHave(exactTexts("a", "c updated", "d", "e"));
-        allPage.itemsLeftCounter.shouldHave(exactText("3"));
+        allPage.assertItemsLeftCounter(3);
 
         // clear completed
         allPage.clearCompletedTasks();
@@ -88,7 +95,7 @@ public class ToDosTest {
         // complete all task
         allPage.toggleAllTasks();
         allPage.tasks.shouldHave(exactTexts("a", "c updated", "e"));
-        allPage.itemsLeftCounter.shouldHave(exactText("0"));
+        allPage.assertItemsLeftCounter(0);
 
         // clear completed task
         allPage.clearCompletedTasks();
@@ -104,23 +111,32 @@ public class ToDosTest {
         activePage.addTask("a");
         activePage.addTask("b");
         activePage.addTask("c");
-        activePage.tasks.shouldHave(exactTexts("a", "b", "c"));
+        activePage.visibleItemOnPage("a", "b", "c");
+        activePage.assertItemsLeftCounter(3);
 
         // edit task
         activePage.editTask("b", "b updated");
-        activePage.tasks.shouldHave(exactTexts("a", "b updated", "c"));
+        activePage.visibleItemOnPage("a", "b updated", "c");
 
         // delete
         activePage.deleteTask("c");
-        activePage.tasks.shouldHave(exactTexts("a", "b updated"));
+        activePage.visibleItemOnPage("a", "b updated");
+        activePage.assertItemsLeftCounter(2);
 
         // complete
         activePage.toggleTask("a");
-        activePage.tasks.shouldHave(exactTexts("b updated"));
-        activePage.itemsLeftCounter.shouldHave(exactText("1"));
-        AllPage allPage = new AllPage();
-        allPage.loadUrl();
-        allPage.tasks.shouldHave(exactTexts("a", "b updated"));
+        activePage.visibleItemOnPage("b updated");
+        activePage.assertItemsLeftCounter(1);
+        
+        // complete all
+        activePage.toggleAllTasks();
+        activePage.tasks.shouldBe(empty);
+        activePage.assertItemsLeftCounter(0);
+
+        // undo complete all
+        activePage.toggleAllTasks();
+        activePage.visibleItemOnPage("a", "b updated");
+        activePage.assertItemsLeftCounter(2);
     }
 
     @Test
@@ -138,33 +154,37 @@ public class ToDosTest {
 
         //delete task
         completedPage.deleteTask("a");
-        completedPage.tasks.shouldHave(exactTexts("b", "c", "d"));
+        completedPage.visibleItemOnPage("b", "c", "d");
+        completedPage.assertItemsLeftCounter(0);
         ActivePage activePage = new ActivePage();
         activePage.loadUrl();
-        activePage.itemsLeftCounter.shouldHave(exactText("0"));
+        activePage.assertItemsLeftCounter(0);
         activePage.tasks.shouldBe(empty);
         completedPage.loadUrl();
 
         // reopen
         completedPage.toggleTask("b");
-        completedPage.tasks.shouldHave(exactTexts("c", "d"));
+        completedPage.visibleItemOnPage("c", "d");
+        completedPage.hiddenItemOnPage("b");
+        completedPage.assertItemsLeftCounter(1);
         allPage.loadUrl();
-        allPage.itemsLeftCounter.shouldHave(exactText("1"));
+        allPage.assertItemsLeftCounter(1);
         allPage.tasks.shouldHave(exactTexts("b", "c", "d"));
         activePage.loadUrl();
-        activePage.itemsLeftCounter.shouldHave(exactText("1"));
-        activePage.tasks.shouldHave(exactTexts("b"));
+        activePage.assertItemsLeftCounter(1);
+        activePage.visibleItemOnPage("b");
+        activePage.hiddenItemOnPage("c", "d");
         completedPage.loadUrl();
 
         // clear
         completedPage.clearCompletedTasks();
-        completedPage.itemsLeftCounter.shouldHave(exactText("1"));
+        completedPage.assertItemsLeftCounter(1);
         completedPage.tasks.shouldBe(empty);
         activePage.loadUrl();
-        activePage.itemsLeftCounter.shouldHave(exactText("1"));
-        activePage.tasks.shouldHave(exactTexts("b"));
+        activePage.assertItemsLeftCounter(1);
+        activePage.visibleItemOnPage("b");
         allPage.loadUrl();
-        allPage.itemsLeftCounter.shouldHave(exactText("1"));
+        allPage.assertItemsLeftCounter(1);
         allPage.tasks.shouldHave(exactTexts("b"));
     }
 }

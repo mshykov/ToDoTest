@@ -14,6 +14,6 @@ public class ActivePage extends ToDosPage {
     public ElementsCollection tasks = $$("#todo-list>.active");
 
     public void loadUrl() {
-        open(todosMainUrl + "examples/troopjs_require/#/active");
+        open(todosMainUrl + "/#/active");
     }
 }
