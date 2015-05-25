@@ -16,20 +16,28 @@ import static com.codeborne.selenide.Selenide.*;
  */
 public class ToDosPage {
 
-    public String todosMainUrl = "http://todomvc.com/examples/troopjs_require";
-    public SelenideElement newTask = $("#new-todo");
-    public SelenideElement itemsLeftCounter = $("#todo-count>strong");
-    public SelenideElement clearCompletedButton = $("#clear-completed");
-    public SelenideElement toggleAllCheckbox = $("#toggle-all");
-    public ElementsCollection tasks = $$("#todo-list>li");
-    public ElementsCollection footerFilters = $$("#filters>li");
+    private String todosMainUrl = "http://todomvc.com/examples/troopjs_require";
+    private SelenideElement newTask = $("#new-todo");
+    private SelenideElement itemsLeftCounter = $("#todo-count>strong");
+    private SelenideElement clearCompletedButton = $("#clear-completed");
+    private SelenideElement toggleAllCheckbox = $("#toggle-all");
+    private ElementsCollection tasks = $$("#todo-list>li");
+    private ElementsCollection footerFilters = $$("#filters>li");
 
-    public void addTask(String text) {
-        newTask.setValue(text).pressEnter();
+    public String getTodosMainUrl() {
+        return todosMainUrl;
+    }
+
+    public ElementsCollection getTasks() {
+        return tasks;
     }
 
     public void loadUrl() {
         open(todosMainUrl);
+    }
+
+    public void addTask(String text) {
+        newTask.setValue(text).pressEnter();
     }
 
     @Step

@@ -9,7 +9,7 @@ import static com.codeborne.selenide.Selenide.open;
 public class AllPage extends ToDosPage {
 
     public void loadUrl() {
-        open(todosMainUrl + "/#/");
+        open(getTodosMainUrl() + "/#/");
     }
 
 }
