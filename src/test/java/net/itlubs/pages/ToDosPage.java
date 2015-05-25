@@ -16,22 +16,15 @@ import static com.codeborne.selenide.Selenide.*;
  */
 public class ToDosPage {
 
-    private String todosMainUrl = "http://todomvc.com/examples/troopjs_require";
+    public String todosMainUrl = "http://todomvc.com/examples/troopjs_require";
     private SelenideElement newTask = $("#new-todo");
     private SelenideElement itemsLeftCounter = $("#todo-count>strong");
     private SelenideElement clearCompletedButton = $("#clear-completed");
     private SelenideElement toggleAllCheckbox = $("#toggle-all");
-    private ElementsCollection tasks = $$("#todo-list>li");
+    public ElementsCollection tasks = $$("#todo-list>li");
     private ElementsCollection footerFilters = $$("#filters>li");
 
-    public String getTodosMainUrl() {
-        return todosMainUrl;
-    }
-
-    public ElementsCollection getTasks() {
-        return tasks;
-    }
-
+    @Step
     public void loadUrl() {
         open(todosMainUrl);
     }

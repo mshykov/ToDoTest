@@ -11,13 +11,9 @@ import static com.codeborne.selenide.Selenide.open;
  */
 public class ActivePage extends ToDosPage {
 
-    private ElementsCollection tasks = $$("#todo-list>.active");
-
-    public ElementsCollection getTasks(){
-        return tasks;
-    }
+    public ElementsCollection tasks = $$("#todo-list>.active");
 
     public void loadUrl() {
-        open(getTodosMainUrl() + "/#/active");
+        open(todosMainUrl + "/#/active");
     }
 }

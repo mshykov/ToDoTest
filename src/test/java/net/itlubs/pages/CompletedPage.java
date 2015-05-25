@@ -11,14 +11,10 @@ import static com.codeborne.selenide.Selenide.open;
  */
 public class CompletedPage extends ToDosPage {
 
-    private ElementsCollection tasks = $$("#todo-list>.completed");
-
-    public ElementsCollection getTasks(){
-        return tasks;
-    }
+    public ElementsCollection tasks = $$("#todo-list>.completed");
 
     public void loadUrl() {
-        open(getTodosMainUrl() + "/#/completed");
+        open(todosMainUrl + "/#/completed");
     }
 
 }
