@@ -1,22 +1,17 @@
 package net.itlubs.hw2;
 
-import com.codeborne.selenide.ElementsCollection;
 import net.itlubs.pages.ActivePage;
 import net.itlubs.pages.AllPage;
 import net.itlubs.pages.CompletedPage;
-import org.junit.Before;
+import net.itlubs.pages.ToDosPage;
 import org.junit.After;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 
 import static com.codeborne.selenide.CollectionCondition.empty;
 import static com.codeborne.selenide.CollectionCondition.exactTexts;
-import static com.codeborne.selenide.CollectionCondition.texts;
-import static com.codeborne.selenide.Condition.exactText;
-import static com.codeborne.selenide.Condition.text;
-import static com.codeborne.selenide.Condition.visible;
-import static com.codeborne.selenide.Selenide.*;
-import static net.itlubs.pages.ToDosPage.*;
+import static com.codeborne.selenide.Selenide.close;
+import static com.codeborne.selenide.Selenide.executeJavaScript;
 
 
 /**
@@ -31,7 +26,7 @@ public class ToDosTest {
 
     @Before
     public void clearData() {
-        todoesPage.loadUrl;
+        todoesPage.loadUrl();
         executeJavaScript("localStorage.clear()");
     }
 
@@ -40,11 +35,9 @@ public class ToDosTest {
         close();
     }
 
-
     @Test
     public void testAtAllFilter() {
         AllPage allPage = new AllPage();
-        allPage.loadUrl();
 
         // create task
         allPage.addTask("a");
@@ -71,7 +64,7 @@ public class ToDosTest {
         // filter
         ActivePage activePage = new ActivePage();
         activePage.loadUrl();
-        activePage.visibleItemOnPage("a", "b updated");
+        activePage.visibleItemOnPage("a", "c updated");
         activePage.hiddenItemOnPage("d", "e");
         activePage.assertItemsLeftCounter(2);
         CompletedPage completedPage = new CompletedPage();

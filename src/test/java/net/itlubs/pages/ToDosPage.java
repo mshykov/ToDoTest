@@ -5,13 +5,10 @@ import com.codeborne.selenide.SelenideElement;
 import org.openqa.selenium.WebElement;
 import ru.yandex.qatools.allure.annotations.Step;
 
-import static com.codeborne.selenide.CollectionCondition.exactTexts;
 import static com.codeborne.selenide.Condition.exactText;
 import static com.codeborne.selenide.Condition.hidden;
 import static com.codeborne.selenide.Condition.visible;
-import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.$$;
-import static com.codeborne.selenide.Selenide.actions;
+import static com.codeborne.selenide.Selenide.*;
 
 /**
  * Created by Shykov M. on 24.05.15.
@@ -67,19 +64,19 @@ public class ToDosPage {
 
     @Step
     public void assertItemsLeftCounter(int leftItemsCounter) {
-        itemsLeftCounter.shouldHave(exactText(integer.toString(leftItemsCounter));
+        itemsLeftCounter.shouldHave(exactText(Integer.toString(leftItemsCounter)));
     }
 
     @Step
     public void visibleItemOnPage(String... tasksToCheck) {
-        for (String i : tasksToChech) {
+        for (String i : tasksToCheck) {
             tasks.findBy(exactText(i)).shouldBe(visible);
         }
     }
 
     @Step
     public void hiddenItemOnPage(String... tasksToCheck) {
-        for (String i : tasksToChech) {
+        for (String i : tasksToCheck) {
             tasks.findBy(exactText(i)).shouldBe(hidden);
         }
     }
