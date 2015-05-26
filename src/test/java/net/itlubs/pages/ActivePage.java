@@ -13,6 +13,7 @@ public class ActivePage extends ToDosPage {
 
     public ElementsCollection tasks = $$("#todo-list>.active");
 
+    @Override
     public void loadUrl() {
         open(todosMainUrl + "/#/active");
     }

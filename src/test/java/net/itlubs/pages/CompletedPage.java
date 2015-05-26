@@ -13,6 +13,7 @@ public class CompletedPage extends ToDosPage {
 
     public ElementsCollection tasks = $$("#todo-list>.completed");
 
+    @Override
     public void loadUrl() {
         open(todosMainUrl + "/#/completed");
     }

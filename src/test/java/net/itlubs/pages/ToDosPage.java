@@ -82,4 +82,26 @@ public class ToDosPage {
         }
     }
 
+    private void clickOnFilterElement(String pageName) {
+        footerFilters.findBy(exactText(pageName)).find("a").click();
+    }
+
+    @Step
+    public ActivePage openActivePage() {
+        clickOnFilterElement("Active");
+        return new ActivePage();
+    }
+
+    @Step
+    public CompletedPage openCompletedPage() {
+        clickOnFilterElement("Completed");
+        return new CompletedPage();
+    }
+
+    @Step
+    public AllPage openAllPage() {
+        clickOnFilterElement("All");
+        return new AllPage();
+    }
+
 }

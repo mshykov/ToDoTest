@@ -13,23 +13,23 @@ import static com.codeborne.selenide.CollectionCondition.exactTexts;
 import static com.codeborne.selenide.Selenide.close;
 import static com.codeborne.selenide.Selenide.executeJavaScript;
 
-
 /**
  * Created by Shykov Maksym on 29.04.15.
  * Version 2.0
  */
+
 public class ToDosTest {
 
-    ToDosPage todoesPage = new ToDosPage();
+    ToDosPage todosPage = new ToDosPage();
 
     @Before
     public void clearData() {
-        todoesPage.loadUrl();
+        todosPage.loadUrl();
         executeJavaScript("localStorage.clear()");
     }
 
     @After
-    public void closeBroweser() {
+    public void closeBrowser() {
         close();
     }
 
@@ -60,17 +60,15 @@ public class ToDosTest {
         allPage.assertItemsLeftCounter(2);
 
         // filter
-        ActivePage activePage = new ActivePage();
-        activePage.loadUrl();
+        ActivePage activePage = allPage.openActivePage();
         activePage.visibleItemOnPage("a", "c updated");
         activePage.hiddenItemOnPage("d", "e");
         activePage.assertItemsLeftCounter(2);
-        CompletedPage completedPage = new CompletedPage();
-        completedPage.loadUrl();
-        activePage.visibleItemOnPage("d", "e");
-        activePage.hiddenItemOnPage("a", "c updated");
-        activePage.assertItemsLeftCounter(2);
-        allPage.loadUrl();
+        CompletedPage completedPage = allPage.openCompletedPage();
+        completedPage.visibleItemOnPage("d", "e");
+        completedPage.hiddenItemOnPage("a", "c updated");
+        completedPage.assertItemsLeftCounter(2);
+        allPage.openAllPage();
         allPage.tasks.shouldHave(exactTexts("a", "c updated", "d", "e"));
         allPage.assertItemsLeftCounter(2);
 
@@ -95,11 +93,12 @@ public class ToDosTest {
 
     @Test
     public void testAtActiveFilter() {
-        ActivePage activePage = new ActivePage();
-        activePage.loadUrl();
+        // pre-pare test data
+        AllPage allPage = new AllPage();
+        allPage.addTask("a");
 
-        // create task
-        activePage.addTask("a");
+        // create task on Active Page
+        ActivePage activePage = allPage.openActivePage();
         activePage.addTask("b");
         activePage.addTask("c");
         activePage.visibleItemOnPage("a", "b", "c");
@@ -134,47 +133,44 @@ public class ToDosTest {
     public void testAtCompletedFilter() {
         // pre-pear test data
         AllPage allPage = new AllPage();
-        allPage.loadUrl();
         allPage.addTask("a");
         allPage.addTask("b");
         allPage.addTask("c");
         allPage.addTask("d");
         allPage.toggleAllTasks();
-        CompletedPage completedPage = new CompletedPage();
-        completedPage.loadUrl();
 
         //delete task
+        CompletedPage completedPage = allPage.openCompletedPage();
         completedPage.deleteTask("a");
         completedPage.visibleItemOnPage("b", "c", "d");
         completedPage.assertItemsLeftCounter(0);
-        ActivePage activePage = new ActivePage();
-        activePage.loadUrl();
+        ActivePage activePage = completedPage.openActivePage();
         activePage.assertItemsLeftCounter(0);
         activePage.tasks.shouldBe(empty);
-        completedPage.loadUrl();
+        activePage.openCompletedPage();
 
         // reopen
         completedPage.toggleTask("b");
         completedPage.visibleItemOnPage("c", "d");
         completedPage.hiddenItemOnPage("b");
         completedPage.assertItemsLeftCounter(1);
-        allPage.loadUrl();
+        completedPage.openAllPage();
         allPage.assertItemsLeftCounter(1);
         allPage.tasks.shouldHave(exactTexts("b", "c", "d"));
-        activePage.loadUrl();
+        allPage.openActivePage();
         activePage.assertItemsLeftCounter(1);
         activePage.visibleItemOnPage("b");
         activePage.hiddenItemOnPage("c", "d");
-        completedPage.loadUrl();
+        activePage.openCompletedPage();
 
         // clear
         completedPage.clearCompletedTasks();
         completedPage.assertItemsLeftCounter(1);
         completedPage.tasks.shouldBe(empty);
-        activePage.loadUrl();
+        completedPage.openActivePage();
         activePage.assertItemsLeftCounter(1);
         activePage.visibleItemOnPage("b");
-        allPage.loadUrl();
+        activePage.openAllPage();
         allPage.assertItemsLeftCounter(1);
         allPage.tasks.shouldHave(exactTexts("b"));
     }

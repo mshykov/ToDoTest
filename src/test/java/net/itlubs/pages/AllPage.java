@@ -8,6 +8,7 @@ import static com.codeborne.selenide.Selenide.open;
  */
 public class AllPage extends ToDosPage {
 
+    @Override
     public void loadUrl() {
         open(todosMainUrl + "/#/");
     }
