@@ -11,6 +11,7 @@ import static com.codeborne.selenide.Selenide.open;
  */
 public class CompletedPage extends ToDosPage {
 
+    @Override
     public ElementsCollection tasks = $$("#todo-list>.completed");
 
     @Override

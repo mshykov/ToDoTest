@@ -23,6 +23,7 @@ public class ToDosPage {
     private SelenideElement toggleAllCheckbox = $("#toggle-all");
     public ElementsCollection tasks = $$("#todo-list>li");
     private ElementsCollection footerFilters = $$("#filters>li");
+    private enum footerFilterElements = {ALL("All"), ACTIVE("Active"), COMPLETED("Completed")};
 
     @Step
     public void loadUrl() {
@@ -35,7 +36,9 @@ public class ToDosPage {
 
     @Step
     public void editTask(String from, String to) {
-        doubleClick(tasks.find(exactText(from)).find("label"));
+        WebElement taskToEdit = tasks.find(exactText(from)).find("label");
+
+        actions().moveToElement(taskToEdit).doubleClick().perform();
         $(".editing").find(".edit").setValue(to).pressEnter();
     }
 
@@ -63,9 +66,8 @@ public class ToDosPage {
         clearCompletedButton.click();
     }
 
-    @Step
-    public void assertItemsLeftCounter(int leftItemsCounter) {
-        itemsLeftCounter.shouldHave(exactText(Integer.toString(leftItemsCounter)));
+    public String getItemsLeftCount() {
+        return itemsLeftCounter.getSelectedText();
     }
 
     @Step
@@ -88,19 +90,19 @@ public class ToDosPage {
 
     @Step
     public ActivePage openActivePage() {
-        clickOnFilterElement("Active");
+        clickOnFilterElement(footerFilterElements.ACTIVE);
         return new ActivePage();
     }
 
     @Step
     public CompletedPage openCompletedPage() {
-        clickOnFilterElement("Completed");
+        clickOnFilterElement(footerFilterElements.COMPLETED);
         return new CompletedPage();
     }
 
     @Step
     public AllPage openAllPage() {
-        clickOnFilterElement("All");
+        clickOnFilterElement(footerFilterElements.ALL);
         return new AllPage();
     }
 
